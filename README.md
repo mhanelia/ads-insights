@@ -81,8 +81,8 @@ flowchart LR
 #### 1. Clone e instale dependências
 
 ```bash
-git clone <repo-url>
-cd cogna
+git clone https://github.com/mhanelia/ads-insights
+cd ads-insights
 pip install -r requirements.txt
 ```
 
