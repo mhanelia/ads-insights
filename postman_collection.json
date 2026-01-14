@@ -1,0 +1,118 @@
+{
+	"info": {
+		"_postman_id": "ai-campaign-analyst-collection",
+		"name": "AI Campaign Analyst",
+		"description": "Serviço de IA que analisa dados de campanhas de marketing digital e gera insights acionáveis.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/health",
+					"host": ["{{base_url}}"],
+					"path": ["health"]
+				},
+				"description": "Verifica se a API está funcionando corretamente."
+			},
+			"response": [
+				{
+					"name": "Healthy Response",
+					"originalRequest": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": ["{{base_url}}"],
+							"path": ["health"]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"body": "{\n    \"status\": \"healthy\",\n    \"version\": \"1.0.0\",\n    \"timestamp\": \"2024-01-15T10:30:00.000000\",\n    \"llm_provider\": \"mock\",\n    \"llm_configured\": true\n}"
+				}
+			]
+		},
+		{
+			"name": "Analyze Campaign",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "data/sample_campaign.csv",
+							"description": "CSV file with campaign data"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/analyze-campaign",
+					"host": ["{{base_url}}"],
+					"path": ["analyze-campaign"]
+				},
+				"description": "Analisa um arquivo CSV com dados de campanhas e retorna insights acionáveis.\n\n**Colunas obrigatórias:**\n- campaign_name\n- impressions\n- clicks\n- ctr\n- conversions\n- cost\n- cpa\n- channel"
+			},
+			"response": [
+				{
+					"name": "Success Response",
+					"originalRequest": {
+						"method": "POST",
+						"url": {
+							"raw": "{{base_url}}/analyze-campaign",
+							"host": ["{{base_url}}"],
+							"path": ["analyze-campaign"]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"body": "{\n    \"executive_summary\": \"Análise de 25 campanhas com gasto total de $168,000.00 e 2,420 conversões. 2 problema(s) de alta severidade identificado(s). CPA médio: $156.74.\",\n    \"key_issues\": [\n        {\n            \"title\": \"High Cpa\",\n            \"description\": \"Found 5 campaign(s) with CPA above 2.0x the average ($156.74). These campaigns are spending $453.60 per acquisition.\",\n            \"affected_campaigns\": [\"Brand Video Campaign\", \"Influencer Collab\", \"Free Trial Offer\"],\n            \"severity\": \"high\",\n            \"potential_impact\": \"Requer análise detalhada para estimar impacto financeiro.\"\n        }\n    ],\n    \"recommendations\": [\n        {\n            \"title\": \"Otimizar campanhas com CPA alto\",\n            \"description\": \"Revisar segmentação, criativos e landing pages das campanhas identificadas.\",\n            \"rationale\": \"CPA acima da média reduz o ROI geral do investimento.\",\n            \"priority\": \"high\",\n            \"expected_outcome\": \"Redução de 20-30% no CPA médio.\"\n        }\n    ],\n    \"risk_alerts\": [\n        {\n            \"title\": \"Risco: High Cpa\",\n            \"description\": \"Found 5 campaign(s) with CPA above 2.0x the average.\",\n            \"severity\": \"high\",\n            \"mitigation\": \"Revisar campanha(s) afetada(s) imediatamente e considerar pausa.\"\n        }\n    ],\n    \"metrics_summary\": {\n        \"total_campaigns\": 25,\n        \"total_spend\": 168000.00,\n        \"total_conversions\": 2420\n    },\n    \"generated_at\": \"2024-01-15T10:30:00.000000\"\n}"
+				},
+				{
+					"name": "Validation Error",
+					"originalRequest": {
+						"method": "POST",
+						"url": {
+							"raw": "{{base_url}}/analyze-campaign",
+							"host": ["{{base_url}}"],
+							"path": ["analyze-campaign"]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"body": "{\n    \"detail\": {\n        \"message\": \"Validation failed\",\n        \"validation_result\": {\n            \"is_valid\": false,\n            \"errors\": [\n                {\n                    \"field\": \"ctr\",\n                    \"message\": \"Required column 'ctr' is missing\",\n                    \"row\": null,\n                    \"value\": null\n                }\n            ],\n            \"warnings\": [],\n            \"rows_processed\": 5\n        }\n    }\n}"
+				},
+				{
+					"name": "Invalid File",
+					"originalRequest": {
+						"method": "POST",
+						"url": {
+							"raw": "{{base_url}}/analyze-campaign",
+							"host": ["{{base_url}}"],
+							"path": ["analyze-campaign"]
+						}
+					},
+					"status": "Unprocessable Entity",
+					"code": 422,
+					"_postman_previewlanguage": "json",
+					"body": "{\n    \"detail\": \"File must be a CSV\"\n}"
+				}
+			]
+		}
+	]
+}
